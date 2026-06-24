@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+<title>Кирилл & Карина — 26.09.26</title>
+<meta name="format-detection" content="telephone=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Noto+Serif+Display:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  /* ====== Bikham Script (Copyright 1999, ES Typography — free for all use) ======
+     Файлы шрифта лежат в папке /fonts рядом с этим index.html.
+     Подключены форматы: woff (основной), ttf (фолбэк для старых браузеров).
+  */
+  @font-face{
+    font-family:'BikhamScript';
+    src:url('fonts/BikhamScriptCyr.woff') format('woff'),
+        url('fonts/BikhamScriptCyr.ttf') format('truetype');
+    font-weight:400;
+    font-style:normal;
+    font-display:swap;
+  }
+
+  :root{
+    --ink:#000000;
+    --paper:#f7f1e6;
+    --line:rgba(0,0,0,0.25);
+    --font-script:'BikhamScript','Snell Roundhand','Brush Script MT', cursive;
+    --font-numbers:'Noto Serif Display', Georgia, serif;
+    --font-body:'Cormorant Garamond', Georgia, serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#000;
+    font-family:var(--font-body);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:none;
+  }
+
+  .site{
+    max-width:520px;
+    margin:0 auto;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* ===== Video background, fixed behind all sections ===== */
+  .video-bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index:-1;
+  }
+  .video-bg video,
+  .video-bg img{
+    position:absolute;
+    top:50%; left:50%;
+    width:100%; height:100%;
+    object-fit:cover;
+    transform:translate(-50%,-50%);
+  }
+  .video-bg img{ z-index:0; }
+  .video-bg video{ z-index:1; }
+  .video-bg.video-failed video{ display:none; }
+
+  section{
+    position:relative;
+    padding:72px 32px 56px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    text-align:center;
+  }
+
+  /* ================================================================ */
+  /* БЛОК 1 СТИЛИ — ОБЛОЖКА (перо, имена, дата, плеер)                 */
+  /* ================================================================ */
+  .feather{
+    width:50px;
+    height:auto;
+    opacity:0.85;
+    margin-bottom:50px;
+  }
+
+  /* --- Общий стиль рукописных заголовков (используется во ВСЕХ блоках) --- */
+  h1.script, .script-title{
+    font-family:var(--font-script);
+    font-weight:400;
+    color:var(--ink);
+    line: height 1.3em;;
+    letter-spacing:0.5px;
+  }
+
+  .names{
+    font-size:clamp(48px, 13vw, 64px);
+    margin:0;
+  }
+  .amp{
+    font-size:clamp(30px, 8vw, 38px);
+    margin:14px 0;
+    color:var(--ink);
+  }
+  .date-row{
+    font-family:var(--font-numbers);
+    font-size:clamp(26px,7vw,34px);
+    letter-spacing:6px;
+    margin-top:26px;
+    border-top:1px solid var(--line);
+    padding-top:22px;
+    width:80%;
+  }
+
+  .player{
+    margin-top:34px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    width:90%;
+    max-width:320px;
+  }
+  .play-btn{
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid var(--ink);
+    background:transparent;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    transition:background .2s ease;
+  }
+  .play-btn:active{background:rgba(43,36,32,0.1);}
+  .play-btn svg{width:14px;height:14px;fill:var(--ink);}
+  .track-info{flex:1;text-align:left;font-size:14px;}
+  .track-name{font-style:italic;opacity:.85;margin-bottom:6px;}
+  .progress-track{
+    width:100%;height:2px;background:rgba(43,36,32,0.25);
+    border-radius:2px;position:relative;cursor:pointer;
+  }
+  .progress-fill{
+    position:absolute;left:0;top:0;height:100%;
+    background:var(--ink);width:0%;border-radius:2px;
+  }
+  .scroll-hint{
+    position:absolute;
+    bottom:28px;left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    opacity:0.55;
+    animation:bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{transform:translate(-50%,0);}
+    50%{transform:translate(-50%,6px);}
+  }
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 1 — ОБЛОЖКА =================== */
+
+
+  /* --- Общие стили: размер заголовков и основного текста (ВСЕ блоки) --- */
+  .eyebrow{
+    font-family:Georgia,serif;
+    font-size:11px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    opacity:0.65;
+    margin-bottom:18px;
+  }
+
+  .script-title{
+    font-size:clamp(36px,10vw,46px);
+    margin:0 0 28px;
+  }
+
+  p.body-text{
+    font-size:17px;
+    line-height:1.75;
+    max-width:380px;
+    margin:0 0 18px;
+    color:var(--ink);
+  }
+
+
+  /* ================================================================ */
+  /* БЛОК 2 СТИЛИ — ДОРОГИЕ ГОСТИ (картинка календаря)                 */
+  /* ================================================================ */
+  .calendar{
+    margin-top:30px;
+    width:100%;
+    max-width:470px;
+  }
+  .calendar-img{
+    width:100%;
+    display:block;
+  }
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 2 ============================= */
+
+
+  /* ================================================================ */
+  /* БЛОК 3 СТИЛИ — МЕСТО ПРОВЕДЕНИЯ (адреса + кнопки карт)            */
+  /* ================================================================ */
+  .venue-block{
+    width:100%;
+    max-width:340px;
+    margin-bottom:30px;
+  }
+  .venue-label{
+    font-size:17px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+    opacity:0.7;
+  }
+  .venue-address{
+    font-size:18px;
+    line-height:1.5;
+    margin-bottom:18px;
+  }
+  .map-btn{
+    display:inline-block;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:14px 26px;
+    border-radius:30px;
+    font-family:var(--font-numbers);
+    font-size:15px;
+    letter-spacing:0.5px;
+    text-decoration:none;
+    cursor:pointer;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .map-btn:active{transform:scale(0.96);opacity:0.85;}
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 3 ============================= */
+
+
+  /* ================================================================ */
+  /* БЛОК 4 СТИЛИ — ТАЙМИНГ (картинка с расписанием)                   */
+  /* ================================================================ */
+  .timeline{
+    width:100%;
+    max-width:360px;
+    margin-top:20px;
+  }
+  .timing-img{
+    width:100%;
+    display:block;
+  }
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 4 ============================= */
+
+
+  /* ================================================================ */
+  /* БЛОК 5 СТИЛИ — ДРЕСС-КОД (картинка с палитрой)                    */
+  /* ================================================================ */
+  .dresscode-people{
+    width:100%;
+    max-width:360px;
+    margin-top:10px;
+  }
+  .dresscode-img{
+    width:100%;
+    display:block;
+  }
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 5 ============================= */
+
+
+  /* ================================================================ */
+  /* БЛОК 6 СТИЛИ — АНКЕТА ГОСТЯ (форма: поля, радио, кнопка)          */
+  /* ================================================================ */
+  .form-wrap{
+    width:100%;
+    max-width:340px;
+    text-align:left;
+    margin-top:10px;
+  }
+  .field{margin-bottom:26px;}
+  .field label{
+    display:block;
+    font-size:16px;
+    margin-bottom:10px;
+  }
+  .required{color:#a33;margin-left:3px;}
+  .field input[type=text], .field input[type=tel]{
+    width:100%;
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--line);
+    padding:8px 2px;
+    font-size:17px;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+  }
+  .field input::placeholder{color:rgba(43,36,32,0.4);}
+  .radio-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    cursor:pointer;
+  }
+  .radio-circle{
+    width:22px;height:22px;
+    border-radius:50%;
+    border:1.5px solid var(--ink);
+    flex-shrink:0;
+    position:relative;
+  }
+  .radio-row input{display:none;}
+  .radio-row input:checked + .radio-circle::after{
+    content:"";
+    position:absolute;
+    width:12px;height:12px;
+    background:var(--ink);
+    border-radius:50%;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+  }
+  .radio-text{font-size:17px;}
+  .phone-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid var(--line);
+    padding:8px 2px;
+  }
+  .phone-code{font-size:17px;opacity:0.8;}
+  .phone-row input{
+    flex:1;
+    background:transparent;border:none;outline:none;
+    font-size:17px;font-family:inherit;color:var(--ink);
+  }
+  .submit-btn{
+    width:100%;
+    background:transparent;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    padding:16px;
+    font-size:17px;
+    font-family:Georgia,serif;
+    letter-spacing:1px;
+    border-radius:4px;
+    cursor:pointer;
+    margin-top:8px;
+    transition:background .2s ease,color .2s ease;
+  }
+  .submit-btn:active{background:var(--ink);color:var(--paper);}
+  .submit-btn:disabled{opacity:0.5;cursor:default;}
+  .form-msg{
+    margin-top:16px;
+    font-size:15px;
+    min-height:20px;
+  }
+  .form-msg.ok{color:#3d6b3d;}
+  .form-msg.err{color:#a33;}
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 6 ============================= */
+
+
+  /* ================================================================ */
+  /* БЛОК 7 СТИЛИ — КОНТАКТЫ + ОБРАТНЫЙ ОТСЧЁТ                         */
+  /* ================================================================ */
+  .contact-text{
+    font-size:17px;
+    line-height:1.7;
+    max-width:340px;
+    margin-bottom:22px;
+  }
+  .phone-link{
+    font-size:24px;
+    color:var(--ink);
+    text-decoration:none;
+    display:block;
+    margin-bottom:6px;
+  }
+  .contact-name{font-size:16px;opacity:0.8;margin-bottom:40px;}
+
+  .countdown-title{
+    font-size:clamp(30px,8vw,38px);
+    margin-bottom:26px;
+  }
+  .countdown-grid{
+    display:flex;
+    gap:18px;
+    margin-top:6px;
+  }
+  .cd-item{text-align:center;min-width:56px;}
+  .cd-num{
+    font-size:clamp(34px,9vw,44px);
+    font-weight:600;
+    font-family:var(--font-numbers);
+    line-height:1;
+  }
+  .cd-label{
+    font-size:12px;
+    text-transform:lowercase;
+    opacity:0.65;
+    margin-top:6px;
+    font-family:var(--font-body);
+    font-style:italic;
+  }
+  /* ============== КОНЕЦ СТИЛЕЙ БЛОКА 7 ============================= */
+
+
+  /* --- Подпись внизу сайта (общий элемент, не отдельный блок) --- */
+  footer{
+    text-align:center;
+    padding:30px 20px 40px;
+    font-size:12px;
+    opacity:0.5;
+    letter-spacing:1px;
+  }
+
+  @media (min-width:600px){
+    .site{box-shadow:0 0 60px rgba(0,0,0,0.4);}
+  }
+</style>
+</head>
+<body>
+<div class="video-bg" id="videoBg">
+  <img src="assets/bg-poster.jpg" alt="" id="bgPoster">
+  <video id="bgVideo" autoplay muted loop playsinline poster="assets/bg-poster.jpg">
+    <source src="assets/bg-video.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="site">
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 1 НАЧАЛО — ОБЛОЖКА (имена, дата, плеер музыки)               -->
+  <!-- ================================================================ -->
+  <section id="cover">
+    <img class="feather" src="assets/feather.png" alt="">
+    <h1 class="names script">Кирилл</h1>
+    <div class="amp script-title">&amp;</div>
+    <h1 class="names script">Карина</h1>
+    <div class="date-row">26 | 09 | 26</div>
+
+    <div class="player">
+      <button class="play-btn" id="playBtn" aria-label="Воспроизвести музыку">
+        <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+      </button>
+      <div class="track-info">
+        <div class="track-name">LOne — Мой океан это ты</div>
+        <div class="progress-track" id="progressTrack">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">листайте вниз</div>
+  </section>
+  <!-- ============== БЛОК 1 КОНЕЦ — ОБЛОЖКА ========================== -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 2 НАЧАЛО — ДОРОГИЕ ГОСТИ (приветствие + календарь-картинка)  -->
+  <!-- ================================================================ -->
+  <section id="guests">
+    <div class="script-title script">Дорогие гости!</div>
+    <p class="body-text">Мы приглашаем вас разделить<br>с нами радостный день,<br>в который мы станем семьёй!</p>
+    <p class="body-text">В этот волшебный день мы скажем<br>друг другу «Да» и соединим наши<br>сердца и судьбы в окружении<br>самых близких и родных людей.</p>
+
+    <div class="calendar">
+      <img src="assets/calendar.png" alt="Календарь сентябрь 2026" class="calendar-img">
+    </div>
+  </section>
+  <!-- ============== БЛОК 2 КОНЕЦ — ДОРОГИЕ ГОСТИ ===================== -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 3 НАЧАЛО — МЕСТО ПРОВЕДЕНИЯ (сборы + ЗАГС, кнопки на карты)  -->
+  <!-- ================================================================ -->
+  <section id="venue">
+    <div class="script-title script">Место проведения</div>
+
+    <div class="venue-block">
+      <div class="venue-label">Сборы</div>
+      <div class="venue-address">г. Коломна,<br>ул. 1-микрорайон, д. 3</div>
+      <a class="map-btn" target="_blank" rel="noopener"
+         href="https://yandex.ru/maps/?text=г.%20Коломна%2C%20ул.%201-микрорайон%2C%20д.%203">Посмотреть на карте</a>
+    </div>
+
+    <div class="venue-block">
+      <div class="venue-label">ЗАГС</div>
+      <div class="venue-address">г. Коломна,<br>ул. Советская площадь, д. 7</div>
+      <a class="map-btn" target="_blank" rel="noopener"
+         href="https://yandex.ru/maps/?text=г.%20Коломна%2C%20ул.%20Советская%20площадь%2C%20д.%207">Посмотреть на карте</a>
+    </div>
+  </section>
+  <!-- ============== БЛОК 3 КОНЕЦ — МЕСТО ПРОВЕДЕНИЯ ================== -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 4 НАЧАЛО — ТАЙМИНГ (картинка с расписанием дня)              -->
+  <!-- ================================================================ -->
+  <section id="timing">
+    <div class="script-title script">Тайминг</div>
+    <div class="timeline">
+      <img src="assets/timing.png" alt="Тайминг свадьбы" class="timing-img">
+    </div>
+  </section>
+  <!-- ============== БЛОК 4 КОНЕЦ — ТАЙМИНГ =========================== -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 5 НАЧАЛО — ДРЕСС-КОД (текст + картинка с палитрой цветов)    -->
+  <!-- ================================================================ -->
+  <section id="dresscode">
+    <div class="script-title script">Дресс-код</div>
+    <p class="body-text">Для нас главное - ваше присутствие!<br>Но мы будем рады, если в своих<br>нарядах вы поддержите цветовую<br>гамму нашей свадьбы.</p>
+    <p class="body-text">И помните, что белый цвет<br>уже забронирован невестой!</p>
+
+    <div class="dresscode-people">
+      <img src="assets/dresscode.png" alt="Дресс-код палитра" class="dresscode-img">
+    </div>
+  </section>
+  <!-- ============== БЛОК 5 КОНЕЦ — ДРЕСС-КОД ========================= -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 6 НАЧАЛО — АНКЕТА ГОСТЯ (форма: имя, да/нет, телефон)        -->
+  <!-- ================================================================ -->
+  <section id="rsvp">
+    <div class="script-title script">Анкета гостя</div>
+    <p class="body-text">Пожалуйста, чтобы всё прошло идеально,<br>ответьте на несколько вопросов в анкете.<br>Подтвердить присутствие необходимо<br>до 1 августа 2026.</p>
+
+    <form class="form-wrap" id="rsvpForm">
+      <div class="field">
+        <label>Ваше имя и фамилия<span class="required">*</span></label>
+        <input type="text" id="guestName" name="guestName" placeholder="Иван Иванов" required>
+      </div>
+
+      <div class="field">
+        <label>Сможете ли вы присутствовать на свадьбе?<span class="required">*</span></label>
+        <label class="radio-row">
+          <input type="radio" name="attendance" value="Да, с удовольствием!" required>
+          <span class="radio-circle"></span>
+          <span class="radio-text">Да, с удовольствием!</span>
+        </label>
+        <label class="radio-row">
+          <input type="radio" name="attendance" value="К сожалению, не смогу.">
+          <span class="radio-circle"></span>
+          <span class="radio-text">К сожалению, не смогу.</span>
+        </label>
+      </div>
+
+      <div class="field">
+        <label>Ваш номер телефона<span class="required">*</span></label>
+        <div class="phone-row">
+          <span class="phone-code">🇷🇺 +7</span>
+          <input type="tel" id="guestPhone" name="guestPhone" placeholder="912 345-67-89" required>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Отправить</button>
+      <div class="form-msg" id="formMsg"></div>
+    </form>
+  </section>
+  <!-- ============== БЛОК 6 КОНЕЦ — АНКЕТА ГОСТЯ ====================== -->
+
+
+  <!-- ================================================================ -->
+  <!-- БЛОК 7 НАЧАЛО — КОНТАКТЫ + ОБРАТНЫЙ ОТСЧЁТ                       -->
+  <!-- ================================================================ -->
+  <section id="contacts">
+    <div class="script-title script">Контакты</div>
+    <p class="contact-text">При возникновении любых вопросов или предложений, связанных с торжеством, вы можете обратиться к невесте:</p>
+    <a class="phone-link" href="tel:+79912808089">+7 (991) 280-80-89</a>
+    <div class="contact-name">Карина</div>
+
+    <div class="countdown-title script">Ждём Вас через...</div>
+    <div class="countdown-grid">
+      <div class="cd-item"><div class="cd-num" id="cdDays">--</div><div class="cd-label">дней</div></div>
+      <div class="cd-item"><div class="cd-num" id="cdHours">--</div><div class="cd-label">часов</div></div>
+      <div class="cd-item"><div class="cd-num" id="cdMinutes">--</div><div class="cd-label">минут</div></div>
+      <div class="cd-item"><div class="cd-num" id="cdSeconds">--</div><div class="cd-label">секунд</div></div>
+    </div>
+  </section>
+  <!-- ============== БЛОК 7 КОНЕЦ — КОНТАКТЫ + ОТСЧЁТ ================= -->
+
+  <footer>Кирилл &amp; Карина · 26.09.2026</footer>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+// 👉 ВАЖНО: замените строку ниже на адрес вашего Cloudflare Worker
+//    (см. файл INSTRUCTIONS.md, Шаг 4-5). Пример:
+//    const WORKER_URL = "https://wedding-rsvp.ivanov123.workers.dev";
+const WORKER_URL = "https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev";
+// Дата и время свадьбы (используется в обратном отсчёте)
+const WEDDING_DATE = new Date("2026-09-26T12:20:00+03:00");
+
+/* ============ Video background with image fallback ============ */
+(function videoBg(){
+  const wrap = document.getElementById('videoBg');
+  const video = document.getElementById('bgVideo');
+
+  function fallbackToImage(){
+    wrap.classList.add('video-failed');
+  }
+
+  video.addEventListener('error', fallbackToImage, true);
+  // Если видео не начало воспроизведение за 6 секунд — тоже считаем сбоем
+  const failSafe = setTimeout(()=>{
+    if(video.readyState < 2){ fallbackToImage(); }
+  }, 6000);
+  video.addEventListener('playing', ()=> clearTimeout(failSafe));
+})();
+
+/* ============ Audio play/pause (demo button, no file wired) ============ */
+(function audioDemo(){
+  const btn = document.getElementById('playBtn');
+  const playIcon = document.getElementById('playIcon');
+  const pauseIcon = document.getElementById('pauseIcon');
+  const fill = document.getElementById('progressFill');
+  let playing = false;
+  let progress = 0;
+  let timer = null;
+
+  btn.addEventListener('click', ()=>{
+    playing = !playing;
+    playIcon.style.display = playing ? 'none' : 'block';
+    pauseIcon.style.display = playing ? 'block' : 'none';
+    if(playing){
+      timer = setInterval(()=>{
+        progress = (progress + 0.5) % 100;
+        fill.style.width = progress + '%';
+      }, 200);
+    } else {
+      clearInterval(timer);
+    }
+  });
+})();
+
+/* ============ Countdown ============ */
+(function countdown(){
+  const elD = document.getElementById('cdDays');
+  const elH = document.getElementById('cdHours');
+  const elM = document.getElementById('cdMinutes');
+  const elS = document.getElementById('cdSeconds');
+
+  function tick(){
+    const now = new Date();
+    let diff = WEDDING_DATE - now;
+    if(diff < 0) diff = 0;
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    elD.textContent = d;
+    elH.textContent = String(h).padStart(2,'0');
+    elM.textContent = String(m).padStart(2,'0');
+    elS.textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ============ RSVP form submit -> Cloudflare Worker -> Telegram ============ */
+(function rsvpForm(){
+  const form = document.getElementById('rsvpForm');
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    msg.textContent = '';
+    msg.className = 'form-msg';
+
+    const name = document.getElementById('guestName').value.trim();
+    const phone = document.getElementById('guestPhone').value.trim();
+    const attendanceInput = form.querySelector('input[name="attendance"]:checked');
+
+    if(!name || !phone || !attendanceInput){
+      msg.textContent = 'Пожалуйста, заполните все поля.';
+      msg.className = 'form-msg err';
+      return;
+    }
+
+    const payload = {
+      name: name,
+      attendance: attendanceInput.value,
+      phone: '+7 ' + phone
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    try{
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('bad response');
+      msg.textContent = 'Спасибо! Ваш ответ получен.';
+      msg.className = 'form-msg ok';
+      form.reset();
+      btn.textContent = 'Отправлено ✓';
+    }catch(err){
+      msg.textContent = 'Не удалось отправить. Попробуйте ещё раз или напишите нам напрямую.';
+      msg.className = 'form-msg err';
+      btn.disabled = false;
+      btn.textContent = 'Отправить';
+    }
+  });
+})();
+</script>
+</body>
+</html>
